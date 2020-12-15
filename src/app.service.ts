@@ -31,10 +31,34 @@ export class AppService {
     let htmlResponse = "<html>\n";
     htmlResponse += "<body>\n";
     htmlResponse += "<table>\n";
+    htmlResponse += "<tr>\n";
+    htmlResponse += "<td>Name</td>\n";
+    htmlResponse += "<td>Telephone</td>\n";
+    htmlResponse += "<td>Email</td>\n";
+    htmlResponse += "<td>URL</td>\n";
+    htmlResponse += "<td>Generate VCard</td>\n";
+    htmlResponse += "</tr>\n";
+
+    let fun = function(id) {
+      alert(id);
+    };
+
+    let i = 0;
+    companiesData.forEach(companyData => {
+      htmlResponse += "<tr>\n";
+      htmlResponse += "<td>" + companyData.name + "</td>\n";
+      htmlResponse += "<td>" + companyData.telephone + "</td>\n";
+      htmlResponse += "<td>" + companyData.email + "</td>\n";
+      htmlResponse += "<td>" + companyData.sameAs + "</td>\n";
+      htmlResponse += "<td><input type=\"button\" id=\"" + i.toString() + "\" onclick=\"fun(" + i.toString() + ");\" value=\"Generate\"></td>\n";
+      htmlResponse += "</tr>\n";
+      i++;
+    });
 
     htmlResponse += "</table>\n";
     htmlResponse += "</body>\n";
     htmlResponse += "</html>\n";
+    return htmlResponse;
   }
 
   getCompaniesData(htmlData: any): Company[] {
