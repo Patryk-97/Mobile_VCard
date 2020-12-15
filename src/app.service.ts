@@ -28,21 +28,13 @@ export class AppService {
     const htmlData = response.data;
     const companiesData = this.getCompaniesData(htmlData);
 
-    //create a new vCard
-    const vCard = vCardsJS();
+    let htmlResponse = "<html>\n";
+    htmlResponse += "<body>\n";
+    htmlResponse += "<table>\n";
 
-    //set properties
-    vCard.organization = companiesData[0].name;
-    vCard.email = companiesData[0].email;
-    vCard.workPhone = companiesData[0].telephone;
-    vCard.url = companiesData[0].sameAs;
-    vCard.workAddress.street = companiesData[0].address.streetAddress;
-    vCard.workAddress.city = companiesData[0].address.addressLocality;
-    vCard.workAddress.postalCode = companiesData[0].address.postalCode;
-    vCard.workAddress.countryRegion = companiesData[0].address.addressCountry;
-    
-    //get as formatted string
-    console.log(vCard.getFormattedString());
+    htmlResponse += "</table>\n";
+    htmlResponse += "</body>\n";
+    htmlResponse += "</html>\n";
   }
 
   getCompaniesData(htmlData: any): Company[] {
@@ -64,5 +56,23 @@ export class AppService {
       }
     });
     return companies;
+  }
+
+  getVCard(companyData: Company): any {
+    //create a new vCard
+    const vCard = vCardsJS();
+
+    //set properties
+    vCard.organization = companyData.name;
+    vCard.email = companyData.email;
+    vCard.workPhone = companyData.telephone;
+    vCard.url = companyData.sameAs;
+    vCard.workAddress.street = companyData.address.streetAddress;
+    vCard.workAddress.city = companyData.address.addressLocality;
+    vCard.workAddress.postalCode = companyData.address.postalCode;
+    vCard.workAddress.countryRegion = companyData.address.addressCountry;
+    
+    //get as formatted string
+    return vCard.getFormattedString();
   }
 }
