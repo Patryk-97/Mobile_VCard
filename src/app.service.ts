@@ -1,5 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { parse } from 'node-html-parser';
+var vCardsJS = require('vcards-js');
 
 type Address = {
   streetAddress: string;
@@ -26,6 +27,22 @@ export class AppService {
     const response = await this.httpService.get(query).toPromise();
     const htmlData = response.data;
     const companiesData = this.getCompaniesData(htmlData);
+
+    //create a new vCard
+    const vCard = vCardsJS();
+
+    //set properties
+    vCard.organization = companiesData[0].name;
+    vCard.email = companiesData[0].email;
+    vCard.workPhone = companiesData[0].telephone;
+    vCard.url = companiesData[0].sameAs;
+    
+    //save to file
+    //vCard.saveToFile('./eric-nesser.vcf');
+    
+    //get as formatted string
+    console.log(vCard.getFormattedString());
+
     return companiesData;
   }
 
