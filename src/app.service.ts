@@ -36,14 +36,13 @@ export class AppService {
     vCard.email = companiesData[0].email;
     vCard.workPhone = companiesData[0].telephone;
     vCard.url = companiesData[0].sameAs;
-    
-    //save to file
-    //vCard.saveToFile('./eric-nesser.vcf');
+    vCard.workAddress.street = companiesData[0].address.streetAddress;
+    vCard.workAddress.city = companiesData[0].address.addressLocality;
+    vCard.workAddress.postalCode = companiesData[0].address.postalCode;
+    vCard.workAddress.countryRegion = companiesData[0].address.addressCountry;
     
     //get as formatted string
     console.log(vCard.getFormattedString());
-
-    return companiesData;
   }
 
   getCompaniesData(htmlData: any): Company[] {
