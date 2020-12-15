@@ -1,6 +1,21 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { parse } from 'node-html-parser';
 
+type Address = {
+  streetAddress: string;
+  addressLocality: string;
+  postalCode: string;
+  addressCountry: string;
+}
+
+type Company = {
+  name: string;
+  telephone: string;
+  email: string;
+  sameAs: URL;
+  address: Address;
+}
+
 @Injectable()
 export class AppService {
   constructor(private httpService: HttpService) {}
@@ -10,21 +25,28 @@ export class AppService {
     query += '&l=' + localization;
     const response = await this.httpService.get(query).toPromise();
     const htmlData = response.data;
-    const cards = this.getCardsFromHtmlData(htmlData);
-    return cards;
+    const companiesData = this.getCompaniesData(htmlData);
+    return companiesData;
   }
 
-  getCardsFromHtmlData(htmlData: any): Event[] {
+  getCompaniesData(htmlData: any): Company[] {
     const root = parse(htmlData);
     const scripts = root.querySelectorAll('script');
 
-    let arr = [];
+    let companies: Company[] = [];
     scripts.forEach(script => {
       const type = script.getAttribute('type');
       if (type === 'application/ld+json') {
-        arr.push(script.rawText);
+        const company = JSON.parse(script.rawText);
+        companies.push({
+          name: company.name,
+          telephone: company.telephone,
+          email: company.email,
+          sameAs: company.sameAs,
+          address: company.address
+        });
       }
     });
-    return arr;
+    return companies;
   }
 }
