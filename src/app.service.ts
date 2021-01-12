@@ -54,6 +54,8 @@ export class AppService {
         }
       }
     });
+
+    this.companies = this.companies.filter((company, index, arr) => company.name != null);
   }
 
   getVCard(companyName: string): any {
@@ -83,6 +85,21 @@ export class AppService {
   buildHtmlResponse(): string {
 
     let htmlResponse = "<html>\n";
+    htmlResponse += "<head>\n";
+    htmlResponse += "<style>\n";
+    htmlResponse += "table, td {\n";
+    htmlResponse += "text-align: center;\n";
+    htmlResponse += "border: 1px solid black;\n";
+    htmlResponse += "}\n";
+    htmlResponse += "td {\n";
+    htmlResponse += "padding: 10px;\n";
+    htmlResponse += "}\n";
+    htmlResponse += "table {\n";
+    htmlResponse += "width: 100%;\n";
+    htmlResponse += "border-collapse: collapse;\n";
+    htmlResponse += "}\n";
+    htmlResponse += "</style>\n";
+    htmlResponse += "</head>\n";
     htmlResponse += "<body>\n";
     htmlResponse += "<table>\n";
     htmlResponse += "<tr>\n";
@@ -96,9 +113,9 @@ export class AppService {
     this.companies.forEach(company => {
       htmlResponse += "<tr>\n";
       htmlResponse += "<td>" + company.name + "</td>\n";
-      htmlResponse += "<td>" + company.telephone + "</td>\n";
-      htmlResponse += "<td>" + company.email + "</td>\n";
-      htmlResponse += "<td>" + company.sameAs + "</td>\n";
+      htmlResponse += "<td>" + (company.telephone ? company.telephone : "brak") + "</td>\n";
+      htmlResponse += "<td>" + (company.email ? company.email : "brak") + "</td>\n";
+      htmlResponse += "<td>" + (company.sameAs ? company.sameAs : "brak") + "</td>\n";
       htmlResponse += "<td><form method=\"post\" action=\"/export\">";
       htmlResponse += "<input type=\"hidden\" name=\"name\" value=\"" + company.name + "\">";
       htmlResponse += "<input type=\"submit\" value=\"Generate\"></form></td>\n";
