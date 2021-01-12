@@ -26,40 +26,13 @@ export class AppService {
     this.companies = [];
   }
 
-  async getCards(name: string, localization: string): Promise<any> {
+  async generateHtmlResponse(name: string, localization: string): Promise<any> {
     let query = 'https://panoramafirm.pl/szukaj?k=' + name;
     query += '&l=' + localization;
     const response = await this.httpService.get(query).toPromise();
     const htmlData = response.data;
     this.extractCompanies(htmlData);
-
-    let htmlResponse = "<html>\n";
-    htmlResponse += "<body>\n";
-    htmlResponse += "<table>\n";
-    htmlResponse += "<tr>\n";
-    htmlResponse += "<td>Name</td>\n";
-    htmlResponse += "<td>Telephone</td>\n";
-    htmlResponse += "<td>Email</td>\n";
-    htmlResponse += "<td>URL</td>\n";
-    htmlResponse += "<td>Generate VCard</td>\n";
-    htmlResponse += "</tr>\n";
-
-    let i = 0;
-    this.companies.forEach(company => {
-      htmlResponse += "<tr>\n";
-      htmlResponse += "<td>" + company.name + "</td>\n";
-      htmlResponse += "<td>" + company.telephone + "</td>\n";
-      htmlResponse += "<td>" + company.email + "</td>\n";
-      htmlResponse += "<td>" + company.sameAs + "</td>\n";
-      htmlResponse += "<td><input type=\"button\" id=\"" + i.toString() + "\" onclick=\"fun(" + i.toString() + ");\" value=\"Generate\"></td>\n";
-      htmlResponse += "</tr>\n";
-      i++;
-    });
-
-    htmlResponse += "</table>\n";
-    htmlResponse += "</body>\n";
-    htmlResponse += "</html>\n";
-    return htmlResponse;
+    return this.buildHtmlResponse();
   }
 
   extractCompanies(htmlData: any): void {
@@ -105,5 +78,36 @@ export class AppService {
     }
 
     return "";
+  }
+
+  buildHtmlResponse(): string {
+
+    let htmlResponse = "<html>\n";
+    htmlResponse += "<body>\n";
+    htmlResponse += "<table>\n";
+    htmlResponse += "<tr>\n";
+    htmlResponse += "<td>Name</td>\n";
+    htmlResponse += "<td>Telephone</td>\n";
+    htmlResponse += "<td>Email</td>\n";
+    htmlResponse += "<td>URL</td>\n";
+    htmlResponse += "<td>Generate VCard</td>\n";
+    htmlResponse += "</tr>\n";
+
+    this.companies.forEach(company => {
+      htmlResponse += "<tr>\n";
+      htmlResponse += "<td>" + company.name + "</td>\n";
+      htmlResponse += "<td>" + company.telephone + "</td>\n";
+      htmlResponse += "<td>" + company.email + "</td>\n";
+      htmlResponse += "<td>" + company.sameAs + "</td>\n";
+      htmlResponse += "<td><form method=\"post\" action=\"/generate\">";
+      htmlResponse += "<input type=\"hidden\" name=\"name\" value=\"" + company.name + "\">";
+      htmlResponse += "<input type=\"submit\" value=\"Generate\"></form></td>\n";
+      htmlResponse += "</tr>\n";
+    });
+
+    htmlResponse += "</table>\n";
+    htmlResponse += "</body>\n";
+    htmlResponse += "</html>\n";
+    return htmlResponse;
   }
 }
