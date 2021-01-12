@@ -19,14 +19,19 @@ type Company = {
 
 @Injectable()
 export class AppService {
-  constructor(private httpService: HttpService) {}
+
+  private companies: Company[];
+
+  constructor(private httpService: HttpService) {
+    this.companies = [];
+  }
 
   async getCards(name: string, localization: string): Promise<any> {
     let query = 'https://panoramafirm.pl/szukaj?k=' + name;
     query += '&l=' + localization;
     const response = await this.httpService.get(query).toPromise();
     const htmlData = response.data;
-    const companiesData = this.getCompaniesData(htmlData);
+    this.extractCompanies(htmlData);
 
     let htmlResponse = "<html>\n";
     htmlResponse += "<body>\n";
@@ -39,17 +44,13 @@ export class AppService {
     htmlResponse += "<td>Generate VCard</td>\n";
     htmlResponse += "</tr>\n";
 
-    let fun = function(id) {
-      alert(id);
-    };
-
     let i = 0;
-    companiesData.forEach(companyData => {
+    this.companies.forEach(company => {
       htmlResponse += "<tr>\n";
-      htmlResponse += "<td>" + companyData.name + "</td>\n";
-      htmlResponse += "<td>" + companyData.telephone + "</td>\n";
-      htmlResponse += "<td>" + companyData.email + "</td>\n";
-      htmlResponse += "<td>" + companyData.sameAs + "</td>\n";
+      htmlResponse += "<td>" + company.name + "</td>\n";
+      htmlResponse += "<td>" + company.telephone + "</td>\n";
+      htmlResponse += "<td>" + company.email + "</td>\n";
+      htmlResponse += "<td>" + company.sameAs + "</td>\n";
       htmlResponse += "<td><input type=\"button\" id=\"" + i.toString() + "\" onclick=\"fun(" + i.toString() + ");\" value=\"Generate\"></td>\n";
       htmlResponse += "</tr>\n";
       i++;
@@ -61,25 +62,25 @@ export class AppService {
     return htmlResponse;
   }
 
-  getCompaniesData(htmlData: any): Company[] {
+  extractCompanies(htmlData: any): void {
     const root = parse(htmlData);
     const scripts = root.querySelectorAll('script');
 
-    let companies: Company[] = [];
     scripts.forEach(script => {
       const type = script.getAttribute('type');
       if (type === 'application/ld+json') {
         const company = JSON.parse(script.rawText);
-        companies.push({
-          name: company.name,
-          telephone: company.telephone,
-          email: company.email,
-          sameAs: company.sameAs,
-          address: company.address
-        });
+        if (company) {
+          this.companies.push({
+            name: company.name,
+            telephone: company.telephone,
+            email: company.email,
+            sameAs: company.sameAs,
+            address: company.address
+          });
+        }
       }
     });
-    return companies;
   }
 
   getVCard(companyData: Company): any {
