@@ -83,21 +83,27 @@ export class AppService {
     });
   }
 
-  getVCard(companyData: Company): any {
+  getVCard(companyName: string): any {
     //create a new vCard
     const vCard = vCardsJS();
 
-    //set properties
-    vCard.organization = companyData.name;
-    vCard.email = companyData.email;
-    vCard.workPhone = companyData.telephone;
-    vCard.url = companyData.sameAs;
-    vCard.workAddress.street = companyData.address.streetAddress;
-    vCard.workAddress.city = companyData.address.addressLocality;
-    vCard.workAddress.postalCode = companyData.address.postalCode;
-    vCard.workAddress.countryRegion = companyData.address.addressCountry;
-    
-    //get as formatted string
-    return vCard.getFormattedString();
+    const company: Company = this.companies.find(company => company.name === companyName);
+
+    if (company) {
+      //set properties
+      vCard.organization = company.name;
+      vCard.email = company.email;
+      vCard.workPhone = company.telephone;
+      vCard.url = company.sameAs;
+      vCard.workAddress.street = company.address.streetAddress;
+      vCard.workAddress.city = company.address.addressLocality;
+      vCard.workAddress.postalCode = company.address.postalCode;
+      vCard.workAddress.countryRegion = company.address.addressCountry;
+      
+      //get as formatted string
+      return vCard.getFormattedString();
+    }
+
+    return "";
   }
 }
