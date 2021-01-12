@@ -99,7 +99,7 @@ export class AppService {
       htmlResponse += "<td>" + company.telephone + "</td>\n";
       htmlResponse += "<td>" + company.email + "</td>\n";
       htmlResponse += "<td>" + company.sameAs + "</td>\n";
-      htmlResponse += "<td><form method=\"post\" action=\"/generate\">";
+      htmlResponse += "<td><form method=\"post\" action=\"/export\">";
       htmlResponse += "<input type=\"hidden\" name=\"name\" value=\"" + company.name + "\">";
       htmlResponse += "<input type=\"submit\" value=\"Generate\"></form></td>\n";
       htmlResponse += "</tr>\n";
